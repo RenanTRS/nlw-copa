@@ -8,6 +8,9 @@ module.exports = {
       fontFamily: {
         sans: 'Roboto, sans-serif'
       },
+      screens: {
+        'tall': {'raw': '(min-height: 800px)'}
+      },
       backgroundImage: {
         app: 'url(/app-bg.png)'
       },

@@ -15,9 +15,9 @@ export default function Home() {
       <main>
         <Image src={logoImg} alt="NLW Copa" />
 
-        <h1 className='mt-14 text-white text-5xl font-bold leading-tight'>Crie seu próprio bolão da copa e compartilhe entre amigos!</h1>
+        <h1 className='mt-10 tall:mt-14 text-white text-4xl tall:text-5xl font-bold leading-tight'>Crie seu próprio bolão da copa e compartilhe entre amigos!</h1>
         
-        <div className='mt-10 flex items-center gap-2'>
+        <div className='mt-5 tall:mt-10 flex items-center gap-2'>
           <Image src={usersAvatarExampleImg} alt="" />
           <strong className='text-gray-100 text-xl'>
             <span className='text-ignite-500'>+12.592</span> pessoas já estão usando
