@@ -39,12 +39,12 @@ export async function poolRoutes(fastify: FastifyInstance) {
 
     } catch {
       //Na versão web não é criado o dono do bolão
-    await prisma.pool.create({
-      data: {
-        title,
-        code
-      }
-    });
+      await prisma.pool.create({
+        data: {
+          title,
+          code
+        }
+      });
 
     return reply.code(201).send({ code });
   })
