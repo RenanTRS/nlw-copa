@@ -20,6 +20,25 @@ export async function poolRoutes(fastify: FastifyInstance) {
     const generate = new ShortUniqueId({ length: 6 });
     const code = String(generate()).toUpperCase();
 
+    try {
+      await request.jwtVerify();
+
+      await prisma.pool.create({
+        data: {
+          title,
+          code,
+          ownerId: request.user.sub,
+
+          participants: {
+            create: {
+              userId: request.user.sub
+            }
+          }
+        }
+      });
+
+    } catch {
+      //Na versão web não é criado o dono do bolão
     await prisma.pool.create({
       data: {
         title,
