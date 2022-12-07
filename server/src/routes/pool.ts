@@ -2,6 +2,7 @@ import { prisma } from "../lib/prisma";
 import { FastifyInstance } from "fastify";
 import { z } from "zod";
 import ShortUniqueId from "short-unique-id";
+import {authenticate} from "../plugins/authenticate";
 
 export async function poolRoutes(fastify: FastifyInstance) {
   fastify.get('/pools/count', async () => {
@@ -10,6 +11,7 @@ export async function poolRoutes(fastify: FastifyInstance) {
     return {count}
   })
 
+  //Criar um bolão
   fastify.post('/pools', async (request, reply) => {
     const createPoolBody = z.object({
       title: z.string()
@@ -45,7 +47,67 @@ export async function poolRoutes(fastify: FastifyInstance) {
           code
         }
       });
+    }
+
 
     return reply.code(201).send({ code });
+  })
+
+  //Entrar em um bolão
+  fastify.post('/pools/:id/join', {onRequest: [authenticate]}, async (request, reply) => {
+    const joinPoolBody = z.object({
+      code: z.string()
+    });
+
+    const { code } = joinPoolBody.parse(request.body);
+
+    const pool = await prisma.pool.findUnique({
+      where: {
+        code
+      },
+      include: {
+        participants: {
+          where: {
+            userId: request.user.sub
+          }
+        }
+      }
+    });
+
+    //Se não houver bolão
+    if(!pool) {
+      return reply.status(400).send({
+        message: "Pool not found."
+      });
+    }
+
+    //Caso pool.participants onde o userId seja igual ao sub
+    if(pool.participants.length > 0) {
+      return reply.status(400).send({
+        message: "You already joined this pool."
+      });
+    }
+
+    //Se o bolão não tiver dono, (bolões criados com a versão web não possuem donos)
+    if(!pool.ownerId) {
+      await prisma.pool.update({
+        where: {
+          id: pool.id
+        },
+        data: {
+          ownerId: request.user.sub
+        }
+      });
+    }
+
+    //Cria participante
+    await prisma.participant.create({
+      data: {
+        poolId: pool.id,
+        userId: request.user.sub
+      }
+    });
+
+    return reply.status(201).send();
   })
 }
