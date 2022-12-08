@@ -54,7 +54,7 @@ export async function poolRoutes(fastify: FastifyInstance) {
   })
 
   //Entrar em um bolão
-  fastify.post('/pools/:id/join', {onRequest: [authenticate]}, async (request, reply) => {
+  fastify.post('/pools/join', {onRequest: [authenticate]}, async (request, reply) => {
     const joinPoolBody = z.object({
       code: z.string()
     });
