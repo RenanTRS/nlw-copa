@@ -2,8 +2,8 @@ import { StatusBar } from 'native-base';
 import { NativeBaseProvider } from 'native-base';
 import { useFonts, Roboto_400Regular, Roboto_500Medium, Roboto_700Bold } from '@expo-google-fonts/roboto';
 import { THEME } from './src/styles/theme';
+import { Routes } from './src/routes';
 import { Loading } from './src/components/Loading';
-import { SignIn } from './src/screens/SignIn';
 
 import { AuthContextProvider } from './src/contexts/AuthContext';
 
@@ -13,7 +13,7 @@ export default function App() {
     <NativeBaseProvider theme={THEME}>
       <AuthContextProvider>
         <StatusBar barStyle='light-content' backgroundColor="transparent" translucent />
-        { fontsLoaded ? <SignIn /> : <Loading /> }
+        { fontsLoaded ? <Routes /> : <Loading /> }
       </AuthContextProvider>
     </NativeBaseProvider>
   );
