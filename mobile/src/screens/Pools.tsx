@@ -1,7 +1,8 @@
-import { useEffect } from "react";
-import { VStack, Icon } from "native-base";
+import { useEffect, useState } from "react";
+import { VStack, Icon, useToast } from "native-base";
 import { Button } from "../components/Button";
 import { Header } from "../components/Header";
+import { Loading } from "../components/Loading";
 
 import { Octicons } from "@expo/vector-icons";
 
@@ -10,14 +11,25 @@ import { useNavigation } from "@react-navigation/native";
 import { api } from "../services/api";
 
 export function Pools() {
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const toast = useToast();
   const { navigate } = useNavigation();
 
   const fetchPools = async () => {
     try {
+      setIsLoading(true);
       const response = await api.get('/pools');
       console.log(response.data.pools);
     } catch (err) {
       console.log(err);
+
+      toast.show({
+        title: 'Não foi possível carregar os botões',
+        placement: 'top',
+        bgColor: 'red.500'
+      });
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -36,6 +48,9 @@ export function Pools() {
           onPress={() => navigate('find')}
         />
       </VStack>
+      {
+        isLoading && <Loading />
+      }
 
     </VStack>
   );
