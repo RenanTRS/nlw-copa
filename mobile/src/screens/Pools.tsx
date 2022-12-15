@@ -1,8 +1,11 @@
-import { useEffect, useState } from "react";
-import { VStack, Icon, useToast } from "native-base";
+import { useState, useCallback } from "react";
+import { VStack, Icon, useToast, FlatList } from "native-base";
 import { Button } from "../components/Button";
 import { Header } from "../components/Header";
 import { Loading } from "../components/Loading";
+import { EmptyPoolList } from "../components/EmptyPoolList";
+import { PoolCard, PoolPros } from "../components/PoolCard";
+import { useFocusEffect } from "@react-navigation/native";
 
 import { Octicons } from "@expo/vector-icons";
 
@@ -12,14 +15,18 @@ import { api } from "../services/api";
 
 export function Pools() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [pools, setPools] = useState<PoolPros[]>([]);
+
   const toast = useToast();
   const { navigate } = useNavigation();
 
   const fetchPools = async () => {
     try {
       setIsLoading(true);
+      
       const response = await api.get('/pools');
-      console.log(response.data.pools);
+      
+      setPools(response.data.pools);
     } catch (err) {
       console.log(err);
 
@@ -33,9 +40,9 @@ export function Pools() {
     }
   }
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     fetchPools();
-  }, [])
+  }, []));
 
   return (
     <VStack flex={1} bgColor="gray.900">
@@ -48,8 +55,17 @@ export function Pools() {
           onPress={() => navigate('find')}
         />
       </VStack>
-      {
-        isLoading && <Loading />
+      
+      { isLoading ? <Loading /> :
+        <FlatList 
+          data={pools}
+          keyExtractor={item => item.id}
+          renderItem={({item}) => <PoolCard data={item} />}
+          px={5}
+          showsHorizontalScrollIndicator={false}
+          _contentContainerStyle={{pb: 20}}
+          ListEmptyComponent={() => <EmptyPoolList />}
+        />
       }
 
     </VStack>
