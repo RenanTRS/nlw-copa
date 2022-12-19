@@ -6,6 +6,7 @@ import { Share } from "react-native";
 import { api } from "../services/api";
 
 import { Loading } from "../components/Loading";
+import { Guesses } from "../components/Guesses";
 import { HStack, VStack } from "native-base";
 import { Header } from "../components/Header";
 import { PoolPros } from "../components/PoolCard";
@@ -73,6 +74,8 @@ export function Details() {
               onPress={() => setOptionSelected("ranking")} 
             />
           </HStack>
+
+          <Guesses poolId={poolDetails.id} code={poolDetails.code} />
         </VStack> 
       
         : <EmptyMyPoolList code={poolDetails.code} />
